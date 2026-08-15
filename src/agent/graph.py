@@ -28,7 +28,7 @@ model = init_chat_model(
 # ---------- 工具 ----------
 
 _tavily_client: TavilyClient | None = None
-OUTPUT_DIR = r"D:\学习\知识库"
+OUTPUT_DIR = "output"
 
 
 def _get_tavily_client() -> TavilyClient | None:
