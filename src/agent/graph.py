@@ -12,7 +12,7 @@ from langchain_core.tools import tool
 from langgraph.graph import END, START, StateGraph
 from tavily import TavilyClient
 
-from src.agent.state import State
+from .src.agent.state import State
 
 load_dotenv()
 BASE_URL = os.getenv("BASE_URL")
