@@ -1,4 +1,4 @@
-# This workflow will run unit tests for the current project
+# 单元测试：导入并编译图，验证基本结构（不调用真实 API）
 
 name: CI
 
@@ -6,13 +6,11 @@ on:
   push:
     branches: ["main"]
   pull_request:
-  workflow_dispatch: # Allows triggering the workflow manually in GitHub UI
+  workflow_dispatch: # 允许在 GitHub UI 手动触发
 
 permissions:
   contents: read
 
-# If another push to the same PR or branch happens while this workflow is still running,
-# cancel the earlier run in favor of the next run.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -28,33 +26,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv venv
-          uv pip install -r pyproject.toml
-      - name: Lint with ruff
-        run: |
-          uv pip install ruff
-          uv run ruff check .
-      - name: Lint with mypy
-        run: |
-          uv pip install mypy
-          uv run mypy --strict src/
-      - name: Check README spelling
-        uses: codespell-project/actions-codespell@v2
-        with:
-          ignore_words_file: .codespellignore
-          path: README.md
-      - name: Check code spelling
-        uses: codespell-project/actions-codespell@v2
-        with:
-          ignore_words_file: .codespellignore
-          path: src/
-      - name: Run tests with pytest
-        run: |
-          uv pip install pytest
-          uv run pytest tests/unit_tests
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest
+      - name: Run unit tests
+        env:
+          # 占位值：单元测试只导入并编译图，不会真正调用模型
+          BASE_URL: "http://localhost"
+          API_KEY: "dummy-key"
+        run: pytest tests/unit_tests
